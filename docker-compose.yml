@@ -1,0 +1,33 @@
+version: '2'
+services:
+  chamilo_db:
+    image: mariadb:10.5
+    container_name: chamilo_db
+    hostname: chamilo_db.docker
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootchamilo
+    volumes:
+      - chamilo_db_data:/var/lib/mysql
+    network_mode: bridge
+  chamilo:
+    image: chamilo:1.11.10
+    container_name: chamilo
+    hostname: chamilo.docker
+    restart: always
+    volumes:
+      - chamilo_images:/var/www/html/chamilo/main/default_course_document/images/
+      - chamilo_lang:/var/www/html/chamilo/main/lang/
+      - chamilo_web:/var/www/html/chamilo/web/
+      -chamilo_app:/var/www/html/chamilo/app/
+      - chamilo_conf:/var/www/html/chamilo/main/inc/conf
+      - chamilo_vendor:/var/www/html/chamilo/vendor
+      - empty_dir_after_install:/var/www/html/chamilo/main/install
+    ports:
+      - "6080:80"
+    network_mode: bridge
+    depends_on:
+      - chamilo_db
+    links:
+      - "chamilo_db"
+
